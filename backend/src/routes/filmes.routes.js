@@ -1,51 +1,62 @@
-/* 
-  QUERY PARAMS: Filtros e paginação; (Get)
-  ROUTE PARAMS: Identificar recursos (atualizar/deletando)
-  REQUEST BODY: Conteúdo na hora de criar/ editar (JSON)
-*/
-
-const express = require("express");
-
-const Filme = require("../models/filme");
-
+const express = require('express');
 const router = express.Router();
+const Filme = require('../models/filme');
 
-//Recuperar todos os registros
-router.get("/", (req, res) => {
-  res.json({ message: "GET ALL" });
-});
-
-//Recuperar registro com ID
-router.get("/:id", (req, res) => {
-  const { id } = req.params;
-
-  res.json({ message: `${id}` });
-});
-
-//Criar um registro
-router.post("/", async (req, res) => {
+// RECUPERAR TODOS OS REGISTROS
+router.get('/', async (req, res) => {
   try {
-    const filme = req.body; //Capturando o corpo da requisição
-    const response = await new Filme(filme).save(); // Criando um novo filme e salvando no banco
+    const filmes = await Filme.find({});
 
-    res.json({ error: false, filme: response });
+    res.json({ error: false, filmes });
   } catch (err) {
-    res.json({ error: true, message: err.message }); //apresentando mensagem de error
+    res.json({ error: true, message: err.message });
   }
 });
 
-//Atualizar um registro
-router.put("/:id", (req, res) => {
-  const { id } = req.params;
-
-  res.json({ atualizar: `${id}` });
+//PEGAR SOMENTE O REGISTRO COM O ID
+router.get('/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const filme = await Filme.findById(id);
+    res.json({ error: false, filme });
+  } catch (err) {
+    res.json({ error: true, message: err.message });
+  }
 });
 
-//Deletar um registro
-router.delete("/:id", (req, res) => {
-  const { id } = req.params;
+// CRIAR UM REGISTRO
+router.post('/', async (req, res) => {
+  try {
+    const filme = req.body;
+    const response = await new Filme(filme).save();
+    res.json({ error: false, filme: response });
+  } catch (err) {
+    res.json({ error: true, message: err.message });
+  }
+});
 
-  res.json({ deletar: `${id}` });
+//ATUALIZAR SOMENTE O REGISTRO COM O ID
+router.put('/:id', async (req, res) => {
+  try {
+    const id = req.params.id;   
+    const novo_filme = req.body;
+
+    const filme = await Filme.findByIdAndUpdate(id, novo_filme); //Atualizando pelo ID
+    res.json({ error: false, filme });
+  } catch (err) {
+    res.json({ error: true, message: err.mensagem });
+  }
+});
+
+// DELETER SOMENTE O REGISTRO COM O ID
+router.delete('/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Filme.findByIdAndDelete(id); //deletando pelo ID
+    res.json({ error: false });
+  } catch (err) {
+    res.json({ error: true, message: err.message });
+  }
 });
 
 module.exports = router;
