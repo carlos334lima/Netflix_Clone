@@ -1,16 +1,17 @@
 //ESQUELE DO BANCO
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const Filme = mongoose.model('Filme', {
-  titulo: {
-    type: String,
-    required: true, //  Validação de campo
-  },
-  atores: Array,
-  ano: Number,
-  detalhes: Object,
-  premiacoes: [Object],
+const Filme = mongoose.model("Filme", {
+  titulo: String,
+  tipo: String,
+  capa: String,
+  logo: String,
+  thumb: String,
+  descricao: String,
+  generos: Array,
+  elenco: Array,
+  cenas_momentos: Array,
 });
 
 module.exports = Filme;
