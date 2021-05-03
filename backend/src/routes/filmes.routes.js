@@ -6,6 +6,8 @@
 
 const express = require("express");
 
+const Filme = require("../models/filme");
+
 const router = express.Router();
 
 //Recuperar todos os registros
@@ -21,10 +23,15 @@ router.get("/:id", (req, res) => {
 });
 
 //Criar um registro
-router.post("/", (req, res) => {
-  const body = req.body;
+router.post("/", async (req, res) => {
+  try {
+    const filme = req.body; //Capturando o corpo da requisição
+    const response = await new Filme(filme).save(); // Criando um novo filme e salvando no banco
 
-  res.json(body);
+    res.json({ error: false, filme: response });
+  } catch (err) {
+    res.json({ error: true, message: err.message }); //apresentando mensagem de error
+  }
 });
 
 //Atualizar um registro
