@@ -8,6 +8,7 @@ const app = express();
 
 const filmeRoutes = require("./src/routes/filmes.routes");
 const usuarioRoutes = require("./src/routes/usuarios.routes");
+const episodeosRoutes = require("./src/routes/episodeos.routes");
 
 app.use(bodyParser.json());
 app.use(cors())
@@ -17,6 +18,7 @@ app.use(morgan("dev"));
 //Já o segundo argumento significa o arquivo que será utilizado.
 app.use("/", filmeRoutes);
 app.use("/usuario", usuarioRoutes);
+app.use("/episodeo", episodeosRoutes);
 
 
 app.listen(3333, () => console.log("Backend Started 🚀"));
