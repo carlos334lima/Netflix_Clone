@@ -1,9 +1,40 @@
-const express = require('express');
+const express = require("express");
+const _ = require("underscore");
+
 const router = express.Router();
-const Filme = require('../models/filme');
+
+const Filme = require("../models/filme");
+const Temporada = require("../models/temporada");
+
+// RECUPERAR HOME
+router.get("/home", async (req, res) => {
+  try {
+    let filmes = await Filme.find({});
+    let finalFilmes = [];
+
+    for (filme of filmes) {
+      const temporadas = await Temporada.find({
+        filme_id: filme._id,
+      });
+
+      const newFilme = { ...filme._doc, temporadas };
+      finalFilmes.push(newFilme);
+    }
+
+    finalFilmes = _.shuffle(finalFilmes);
+
+    const principal = finalFilmes[0];
+
+    const secoes = _.chunk(finalFilmes, 5);
+
+    res.json({ error: false, principal, secoes });
+  } catch (err) {
+    res.json({ error: true, message: err.message });
+  }
+});
 
 // RECUPERAR TODOS OS REGISTROS
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const filmes = await Filme.find({});
 
@@ -14,7 +45,7 @@ router.get('/', async (req, res) => {
 });
 
 //PEGAR SOMENTE O REGISTRO COM O ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const filme = await Filme.findById(id);
@@ -25,7 +56,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // CRIAR UM REGISTRO
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const filme = req.body;
     const response = await new Filme(filme).save();
@@ -36,9 +67,9 @@ router.post('/', async (req, res) => {
 });
 
 //ATUALIZAR SOMENTE O REGISTRO COM O ID
-router.put('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
-    const id = req.params.id;   
+    const id = req.params.id;
     const novo_filme = req.body;
 
     const filme = await Filme.findByIdAndUpdate(id, novo_filme); //Atualizando pelo ID
@@ -49,7 +80,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETER SOMENTE O REGISTRO COM O ID
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     await Filme.findByIdAndDelete(id); //deletando pelo ID
