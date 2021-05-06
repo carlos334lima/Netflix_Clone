@@ -5,6 +5,7 @@ import {StatusBar} from 'react-native';
 console.disableYellowBox = true;
 
 import Login from "./src/pages/Login";
+import Home from "./src/pages/Home";
 
 const App = () => {
 
